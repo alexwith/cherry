@@ -1,0 +1,14 @@
+plugins {
+    id("java")
+}
+
+group("net.cherry")
+version("0.0.1")
+
+repositories {
+
+}
+
+dependencies {
+
+}
