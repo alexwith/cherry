@@ -1,8 +1,7 @@
 package net.cherry.test;
 
-import net.cherry.annotation.EntityDatabase;
-import net.cherry.entity.Entity;
+import net.cherry.annotation.Entity;
 
-@EntityDatabase("test")
-public class TestEntity implements Entity {
+@Entity(database = "test")
+public class TestEntity {
 }
