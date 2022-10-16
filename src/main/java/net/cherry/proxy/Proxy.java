@@ -10,31 +10,32 @@ import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityControllerManager;
 import net.cherry.proxy.interceptor.Interceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
+import net.cherry.util.BiMap;
 
 public class Proxy {
 
-    private static final Map<Class<?>, Class<?>> PROXIED_CLASSES = new ConcurrentHashMap<>();
+    private static final BiMap<Class<?>, Class<?>> PROXIED_CLASSES = new BiMap<>();
     private static final Map<Class<?>, Constructor<?>> PROXIED_CONSTRUCTORS = new ConcurrentHashMap<>();
     private static final Set<Interceptor> INTERCEPTORS = Set.of(
         new ToStringInterceptor()
     );
 
     @SuppressWarnings("unchecked")
-    public static <T> Class<T> proxyClass(Class<T> clazz) {
-        if (PROXIED_CLASSES.containsKey(clazz)) {
-            return (Class<T>) PROXIED_CLASSES.get(clazz);
+    public static <T> Class<T> proxyClass(Class<T> originClass) {
+        if (PROXIED_CLASSES.containsKey(originClass)) {
+            return (Class<T>) PROXIED_CLASSES.get(originClass);
         }
 
-        Builder<?> builder = new ByteBuddy().subclass(clazz);
+        Builder<?> builder = new ByteBuddy().subclass(originClass);
 
         for (final Interceptor interceptor : INTERCEPTORS) {
             builder = interceptor.create(builder);
         }
 
-        final Class<T> proxiedClass = (Class<T>) builder.make().load(clazz.getClassLoader()).getLoaded();
+        final Class<T> proxiedClass = (Class<T>) builder.make().load(originClass.getClassLoader()).getLoaded();
         final Constructor<T> constructor = (Constructor<T>) proxiedClass.getDeclaredConstructors()[0];
 
-        PROXIED_CLASSES.put(clazz, proxiedClass);
+        PROXIED_CLASSES.put(originClass, proxiedClass);
         PROXIED_CONSTRUCTORS.put(proxiedClass, constructor);
 
         return proxiedClass;
@@ -50,7 +51,8 @@ public class Proxy {
 
         try {
             final T entity = constructor.newInstance();
-            final EntityController<T> controller = new EntityController<>(proxiedClass, entity);
+            final Class<T> originClass = (Class<T>) PROXIED_CLASSES.inverted().get(proxiedClass);
+            final EntityController<T> controller = new EntityController<>(originClass, entity);
 
             EntityControllerManager.registerController(controller);
 
