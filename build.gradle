@@ -10,5 +10,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.squareup:javapoet:1.13.0")
+    implementation("net.bytebuddy:byte-buddy:1.12.18")
+    implementation("net.bytebuddy:byte-buddy-agent:1.12.18")
 }
