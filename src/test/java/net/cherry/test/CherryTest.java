@@ -6,8 +6,6 @@ import net.cherry.enums.SortingOrder;
 public class CherryTest {
 
     public static void main(String[] args) {
-        final TestEntity test = new TestEntity();
-
         final TestEntity foundTest = CherryClient.findMany(TestEntity.class, (query) -> query
             .where("age", (options) -> options
                 .sortBy(SortingOrder.ASCENDING)
@@ -16,5 +14,8 @@ public class CherryTest {
                 .endsWith("x")
             )
         );
+
+        final TestEntity hello = CherryClient.create(TestEntity.class);
+        System.out.println("ayo: " + hello);
     }
 }
