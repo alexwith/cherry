@@ -9,17 +9,24 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityControllerManager;
 import net.cherry.proxy.entity.ProxiedClass;
+import net.cherry.proxy.interceptor.GetterInterceptor;
 import net.cherry.proxy.interceptor.Interceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
+import net.cherry.proxy.scanner.FieldScanner;
+import net.cherry.proxy.scanner.Scanner;
 
-public class Proxy {
+public class ProxyFactory {
     private static final Map<Class<?>, ProxiedClass<?>> PROXIED_CLASSES = new ConcurrentHashMap<>();
     private static final Set<Interceptor> INTERCEPTORS = Set.of(
-        new ToStringInterceptor()
+        new ToStringInterceptor(),
+        new GetterInterceptor()
+    );
+    private static final Set<Scanner> SCANNERS = Set.of(
+        new FieldScanner()
     );
 
     @SuppressWarnings("unchecked")
-    public static <T> ProxiedClass<T> proxyClass(Class<T> originClass) {
+    public static <T> ProxiedClass<T> createProxiedClass(Class<T> originClass) {
         if (PROXIED_CLASSES.containsKey(originClass)) {
             return (ProxiedClass<T>) PROXIED_CLASSES.get(originClass);
         }
@@ -32,6 +39,10 @@ public class Proxy {
 
         final Class<T> clazz = (Class<T>) builder.make().load(originClass.getClassLoader()).getLoaded();
         final ProxiedClass<T> proxiedClass = new ProxiedClass<>(clazz, originClass);
+
+        for (final Scanner scanner : SCANNERS) {
+            scanner.scan(proxiedClass);
+        }
 
         PROXIED_CLASSES.put(originClass, proxiedClass);
 

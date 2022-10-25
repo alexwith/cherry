@@ -1,7 +1,9 @@
 package net.cherry.proxy.interceptor;
 
+import java.lang.reflect.Method;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
@@ -18,8 +20,9 @@ public class GetterInterceptor implements Interceptor {
     }
 
     @RuntimeType
-    public static Object intercept(@This Object entity) {
-        System.out.println("getting value");
+    public static Object intercept(@This Object entity, @Origin Method method) {
+        final EntityController<?> controller = EntityControllerManager.getController(entity);
+
         return null;
     }
 }

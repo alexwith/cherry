@@ -3,7 +3,7 @@ package net.cherry.client;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.cherry.annotation.Entity;
-import net.cherry.proxy.Proxy;
+import net.cherry.proxy.ProxyFactory;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.query.Query;
 import net.cherry.thread.CherryExecutor;
@@ -11,8 +11,8 @@ import net.cherry.thread.CherryExecutor;
 public interface CherryClient {
 
     static <T> T create(Class<T> identifier) {
-        final ProxiedClass<T> proxiedClass = Proxy.proxyClass(identifier);
-        return Proxy.createProxiedEntity(proxiedClass);
+        final ProxiedClass<T> proxiedClass = ProxyFactory.createProxiedClass(identifier);
+        return ProxyFactory.createProxiedEntity(proxiedClass);
     }
 
     static <T> T findMany(Class<T> identifier, Consumer<Query> queryConsumer) {

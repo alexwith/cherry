@@ -2,15 +2,19 @@ package net.cherry.proxy.entity;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProxiedClass<T> {
     private final Class<T> clazz;
     private final Class<T> originClass;
     private final Constructor<T> constructor;
     private final Object[] emptyConstructorArgs;
+    private final Map<Method, ProxyField> fields = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     public ProxiedClass(Class<T> clazz, Class<T> originClass) {
@@ -34,6 +38,14 @@ public class ProxiedClass<T> {
 
     public Object[] getEmptyConstructorArgs() {
         return this.emptyConstructorArgs;
+    }
+
+    public void addField(ProxyField field) {
+        this.fields.put(field.getMethod(), field);
+    }
+
+    public ProxyField getField(Method method) {
+        return this.fields.get(method);
     }
 
     private Object[] createEmptyConstructorArgs() {
