@@ -4,13 +4,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.cherry.annotation.Entity;
 import net.cherry.proxy.Proxy;
+import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.query.Query;
 import net.cherry.thread.CherryExecutor;
 
 public interface CherryClient {
 
     static <T> T create(Class<T> identifier) {
-        final Class<T> proxiedClass = Proxy.proxyClass(identifier);
+        final ProxiedClass<T> proxiedClass = Proxy.proxyClass(identifier);
         return Proxy.createProxiedEntity(proxiedClass);
     }
 

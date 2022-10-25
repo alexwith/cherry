@@ -8,22 +8,20 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityControllerManager;
+import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.interceptor.Interceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
-import net.cherry.util.BiMap;
 
 public class Proxy {
-
-    private static final BiMap<Class<?>, Class<?>> PROXIED_CLASSES = new BiMap<>();
-    private static final Map<Class<?>, Constructor<?>> PROXIED_CONSTRUCTORS = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, ProxiedClass<?>> PROXIED = new ConcurrentHashMap<>();
     private static final Set<Interceptor> INTERCEPTORS = Set.of(
         new ToStringInterceptor()
     );
 
     @SuppressWarnings("unchecked")
-    public static <T> Class<T> proxyClass(Class<T> originClass) {
-        if (PROXIED_CLASSES.containsKey(originClass)) {
-            return (Class<T>) PROXIED_CLASSES.get(originClass);
+    public static <T> ProxiedClass<T> proxyClass(Class<T> originClass) {
+        if (PROXIED.containsKey(originClass)) {
+            return (ProxiedClass<T>) PROXIED.get(originClass);
         }
 
         Builder<?> builder = new ByteBuddy().subclass(originClass);
@@ -32,26 +30,17 @@ public class Proxy {
             builder = interceptor.create(builder);
         }
 
-        final Class<T> proxiedClass = (Class<T>) builder.make().load(originClass.getClassLoader()).getLoaded();
-        final Constructor<T> constructor = (Constructor<T>) proxiedClass.getDeclaredConstructors()[0];
+        final Class<T> clazz = (Class<T>) builder.make().load(originClass.getClassLoader()).getLoaded();
 
-        PROXIED_CLASSES.put(originClass, proxiedClass);
-        PROXIED_CONSTRUCTORS.put(proxiedClass, constructor);
-
-        return proxiedClass;
+        return new ProxiedClass<>(clazz, originClass);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxiedEntity(Class<T> proxiedClass) {
-        if (!PROXIED_CONSTRUCTORS.containsKey(proxiedClass)) {
-            throw new IllegalStateException("Tried creating an instance of a non-proxied class.");
-        }
-
-        final Constructor<T> constructor = (Constructor<T>) PROXIED_CONSTRUCTORS.get(proxiedClass);
+    public static <T> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
+        final Constructor<T> constructor = proxiedClass.getConstructor();
 
         try {
             final T entity = constructor.newInstance();
-            final Class<T> originClass = (Class<T>) PROXIED_CLASSES.inverted().get(proxiedClass);
+            final Class<T> originClass = proxiedClass.getOriginClass();
             final EntityController<T> controller = new EntityController<>(originClass, entity);
 
             EntityControllerManager.registerController(controller);
