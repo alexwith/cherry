@@ -13,15 +13,15 @@ import net.cherry.proxy.interceptor.Interceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
 
 public class Proxy {
-    private static final Map<Class<?>, ProxiedClass<?>> PROXIED = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, ProxiedClass<?>> PROXIED_CLASSES = new ConcurrentHashMap<>();
     private static final Set<Interceptor> INTERCEPTORS = Set.of(
         new ToStringInterceptor()
     );
 
     @SuppressWarnings("unchecked")
     public static <T> ProxiedClass<T> proxyClass(Class<T> originClass) {
-        if (PROXIED.containsKey(originClass)) {
-            return (ProxiedClass<T>) PROXIED.get(originClass);
+        if (PROXIED_CLASSES.containsKey(originClass)) {
+            return (ProxiedClass<T>) PROXIED_CLASSES.get(originClass);
         }
 
         Builder<?> builder = new ByteBuddy().subclass(originClass);
@@ -31,8 +31,11 @@ public class Proxy {
         }
 
         final Class<T> clazz = (Class<T>) builder.make().load(originClass.getClassLoader()).getLoaded();
+        final ProxiedClass<T> proxiedClass = new ProxiedClass<>(clazz, originClass);
 
-        return new ProxiedClass<>(clazz, originClass);
+        PROXIED_CLASSES.put(originClass, proxiedClass);
+
+        return proxiedClass;
     }
 
     public static <T> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
