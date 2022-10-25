@@ -16,6 +16,7 @@ public class CherryTest {
         );
 
         final TestEntity hello = CherryClient.create(TestEntity.class);
+
         System.out.println("ayo: " + hello);
     }
 }

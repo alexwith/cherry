@@ -42,7 +42,7 @@ public class Proxy {
         final Constructor<T> constructor = proxiedClass.getConstructor();
 
         try {
-            final T entity = constructor.newInstance();
+            final T entity = constructor.newInstance(proxiedClass.getEmptyConstructorArgs());
             final Class<T> originClass = proxiedClass.getOriginClass();
             final EntityController<T> controller = new EntityController<>(originClass, entity);
 
