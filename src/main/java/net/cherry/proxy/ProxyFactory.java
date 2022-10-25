@@ -14,6 +14,7 @@ import net.cherry.proxy.interceptor.Interceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
 import net.cherry.proxy.scanner.FieldScanner;
 import net.cherry.proxy.scanner.Scanner;
+import net.cherry.util.SneakyThrows;
 
 public class ProxyFactory {
     private static final Map<Class<?>, ProxiedClass<?>> PROXIED_CLASSES = new ConcurrentHashMap<>();
@@ -52,16 +53,14 @@ public class ProxyFactory {
     public static <T> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
         final Constructor<T> constructor = proxiedClass.getConstructor();
 
-        try {
+        return SneakyThrows.supply(() -> {
             final T entity = constructor.newInstance(proxiedClass.getEmptyConstructorArgs());
             final Class<T> originClass = proxiedClass.getOriginClass();
-            final EntityController<T> controller = new EntityController<>(originClass, entity);
+            final EntityController<T> controller = new EntityController<>(entity, originClass, proxiedClass);
 
             EntityControllerManager.registerController(controller);
 
             return entity;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 }
