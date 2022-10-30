@@ -1,22 +1,21 @@
 package net.cherry.proxy.entity;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class ProxyField {
     private final Field field;
-    private final Method method;
+    private final String path;
 
-    public ProxyField(Field field, Method method) {
+    public ProxyField(Field field) {
         this.field = field;
-        this.method = method;
+        this.path = field.getName();
     }
 
     public Field getField() {
         return this.field;
     }
 
-    public Method getMethod() {
-        return this.method;
+    public String getPath() {
+        return this.path;
     }
 }

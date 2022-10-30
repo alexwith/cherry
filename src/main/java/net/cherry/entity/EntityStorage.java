@@ -7,7 +7,7 @@ public class EntityStorage {
     private final Map<String, Object> values = new ConcurrentHashMap<>();
 
     public Object get(String field) {
-        return field;
+        return this.values.get(field);
     }
 
     public void set(String field, Object object) {

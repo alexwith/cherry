@@ -11,6 +11,7 @@ import net.cherry.entity.EntityControllerManager;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.interceptor.GetterInterceptor;
 import net.cherry.proxy.interceptor.Interceptor;
+import net.cherry.proxy.interceptor.SetterInterceptor;
 import net.cherry.proxy.interceptor.ToStringInterceptor;
 import net.cherry.proxy.scanner.FieldScanner;
 import net.cherry.proxy.scanner.Scanner;
@@ -20,7 +21,8 @@ public class ProxyFactory {
     private static final Map<Class<?>, ProxiedClass<?>> PROXIED_CLASSES = new ConcurrentHashMap<>();
     private static final Set<Interceptor> INTERCEPTORS = Set.of(
         new ToStringInterceptor(),
-        new GetterInterceptor()
+        new GetterInterceptor(),
+        new SetterInterceptor()
     );
     private static final Set<Scanner> SCANNERS = Set.of(
         new FieldScanner()

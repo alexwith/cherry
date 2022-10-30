@@ -6,8 +6,8 @@ import net.cherry.annotation.Entity;
 @Entity(database = "test")
 public class TestEntity {
     private final UUID id;
-    private final String name;
-    private final int age;
+    private String name;
+    private int age;
 
     protected TestEntity(UUID id, String name, int age) {
         this.id = id;
@@ -23,7 +23,15 @@ public class TestEntity {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getAge() {
         return this.age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

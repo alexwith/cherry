@@ -3,6 +3,7 @@ package net.cherry.proxy.interceptor;
 import java.lang.reflect.Method;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
@@ -14,17 +15,18 @@ import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.entity.ProxyField;
 import net.cherry.util.SneakyThrows;
 
-public class GetterInterceptor implements Interceptor {
+public class SetterInterceptor implements Interceptor {
 
     @Override
     public Builder<?> create(Builder<?> builder) {
         return builder
-            .method(ElementMatchers.isGetter())
-            .intercept(MethodDelegation.to(GetterInterceptor.class));
+            .method(ElementMatchers.isSetter())
+            .intercept(MethodDelegation.to(SetterInterceptor.class));
     }
 
+
     @RuntimeType
-    public static Object intercept(@This Object entity, @Origin Method method) {
+    public static Object intercept(@This Object entity, @Origin Method method, @AllArguments Object[] args) {
         final EntityController<?> controller = EntityControllerManager.getController(entity);
         final ProxiedClass<?> proxiedClass = controller.getProxiedClass();
         final ProxyField field = proxiedClass.getField(method);
@@ -32,9 +34,11 @@ public class GetterInterceptor implements Interceptor {
             return SneakyThrows.supply(() -> method.invoke(entity));
         }
 
-        final EntityStorage storage = controller.getStorage();
-        final Object value = storage.get(field.getPath());
+        final Object value = args[0];
 
-        return value;
+        final EntityStorage storage = controller.getStorage();
+        storage.set(field.getPath(), value);
+
+        return null;
     }
 }

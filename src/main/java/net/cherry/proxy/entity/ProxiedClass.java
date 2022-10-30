@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ProxiedClass<T> {
     private final Class<T> clazz;
     private final Class<T> originClass;
     private final Constructor<T> constructor;
     private final Object[] emptyConstructorArgs;
-    private final Map<Method, ProxyField> fields = new HashMap<>();
+    private final Map<String, ProxyField> fields = new HashMap<>();
+
+    public static final Set<String> METHOD_PREFIXES = Set.of("is", "get", "set");
 
     @SuppressWarnings("unchecked")
     public ProxiedClass(Class<T> clazz, Class<T> originClass) {
@@ -41,11 +44,16 @@ public class ProxiedClass<T> {
     }
 
     public void addField(ProxyField field) {
-        this.fields.put(field.getMethod(), field);
+        this.fields.put(field.getPath(), field);
     }
 
     public ProxyField getField(Method method) {
-        return this.fields.get(method);
+        String methodName = method.getName();
+        for (final String methodPrefix : METHOD_PREFIXES) {
+            methodName = methodName.replaceFirst(methodPrefix, "");
+        }
+
+        return this.fields.get(methodName.toLowerCase());
     }
 
     private Object[] createEmptyConstructorArgs() {
