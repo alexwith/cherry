@@ -9,7 +9,7 @@ public class TestEntity {
     private final String name;
     private final int age;
 
-    public TestEntity(UUID id, String name, int age) {
+    private TestEntity(UUID id, String name, int age) {
         this.id = id;
         this.name = name;
         this.age = age;
