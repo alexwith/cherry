@@ -1,6 +1,7 @@
 package net.cherry.proxy.interceptor;
 
 import java.lang.reflect.Method;
+import java.util.UUID;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Origin;

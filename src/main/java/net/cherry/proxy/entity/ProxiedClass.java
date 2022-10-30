@@ -20,7 +20,7 @@ public class ProxiedClass<T> {
     public ProxiedClass(Class<T> clazz, Class<T> originClass) {
         this.clazz = clazz;
         this.originClass = originClass;
-        this.constructor = (Constructor<T>) originClass.getDeclaredConstructors()[0];
+        this.constructor = (Constructor<T>) clazz.getDeclaredConstructors()[0];
         this.emptyConstructorArgs = this.createEmptyConstructorArgs();
     }
 
