@@ -1,2 +1,4 @@
 rootProject.name = 'cherry'
+include 'common'
+include 'mongo'
 

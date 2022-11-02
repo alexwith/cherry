@@ -1,4 +1,4 @@
-package net.cherry.test;
+package test;
 
 import net.cherry.client.CherryClient;
 import net.cherry.enums.SortingOrder;

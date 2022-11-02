@@ -1,15 +1,11 @@
-plugins {
-    id("java")
+allprojects {
+    apply plugin: "java"
+
+    group("net.cherry")
+    version("0.0.1")
+
+    repositories {
+        mavenCentral()
+    }
 }
 
-group("net.cherry")
-version("0.0.1")
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("net.bytebuddy:byte-buddy:1.12.18")
-    implementation("net.bytebuddy:byte-buddy-agent:1.12.18")
-}
