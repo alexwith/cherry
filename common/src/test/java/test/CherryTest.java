@@ -1,5 +1,6 @@
 package test;
 
+import java.util.HashMap;
 import net.cherry.client.CherryClient;
 import net.cherry.enums.SortingOrder;
 
@@ -16,10 +17,10 @@ public class CherryTest {
         );
 
         final TestEntity hello = CherryClient.create(TestEntity.class);
-        System.out.println("yo: " + hello.getId() + " -> " + hello.getName());
+        hello.setAccounts(new HashMap<>());
 
-        hello.setName("bob");
+        hello.getAccounts().put("bob", 100);
 
-        System.out.println("oke: " + hello.getName());
+        System.out.println("oke: " + hello.getAccounts().get("bob"));
     }
 }

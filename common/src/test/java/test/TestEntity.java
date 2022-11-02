@@ -1,5 +1,7 @@
 package test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import net.cherry.annotation.Entity;
 import net.cherry.annotation.EntityDefaults;
@@ -10,18 +12,21 @@ public class TestEntity {
 
     private String name;
     private int age;
+    private Map<String, Integer> accounts;
 
     @EntityDefaults
     private static final TestEntity DEFAULT = new TestEntity(
         null,
         "Anonymous",
-        0
+        0,
+        new HashMap<>()
     );
 
-    protected TestEntity(UUID id, String name, int age) {
+    protected TestEntity(UUID id, String name, int age, Map<String, Integer> accounts) {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.accounts = accounts;
     }
 
     public UUID getId() {
@@ -42,5 +47,13 @@ public class TestEntity {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Map<String, Integer> getAccounts() {
+        return this.accounts;
+    }
+
+    public void setAccounts(Map<String, Integer> accounts) {
+        this.accounts = accounts;
     }
 }
