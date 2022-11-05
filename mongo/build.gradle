@@ -1,3 +1,4 @@
 dependencies {
+    implementation(project(":common"))
     implementation("org.mongodb:mongodb-driver-sync:4.7.2")
 }

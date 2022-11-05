@@ -1,13 +1,13 @@
 package test;
 
 import java.util.HashMap;
-import net.cherry.client.CherryClient;
+import net.cherry.Cherry;
 import net.cherry.enums.SortingOrder;
 
 public class CherryTest {
 
     public static void main(String[] args) {
-        final TestEntity foundTest = CherryClient.findMany(TestEntity.class, (query) -> query
+        final TestEntity foundTest = Cherry.findMany(TestEntity.class, (query) -> query
             .where("age", (options) -> options
                 .sortBy(SortingOrder.ASCENDING)
             )
@@ -16,7 +16,7 @@ public class CherryTest {
             )
         );
 
-        final TestEntity hello = CherryClient.create(TestEntity.class);
+        final TestEntity hello = Cherry.create(TestEntity.class);
         hello.setAccounts(new HashMap<>());
 
         hello.getAccounts().put("bob", 100);
