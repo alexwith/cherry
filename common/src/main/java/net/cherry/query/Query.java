@@ -1,8 +1,13 @@
 package net.cherry.query;
 
 import java.util.function.Consumer;
+import net.cherry.query.impl.QueryImpl;
 
 public interface Query {
+
+    static Query create() {
+        return new QueryImpl();
+    }
 
     Query all();
 

@@ -12,17 +12,19 @@ import net.cherry.thread.CherryExecutor;
 public class Cherry {
     private static CherryClient client;
 
-    public static CherryClient openConnection(CherryClient client) {
+    public static CherryClient connect(CherryClient client) {
         Cherry.client = client;
 
-        client.open();
+        client.connect();
 
         return client;
     }
 
     public static <T> T create(Class<T> identifier) {
         final ProxiedClass<T> proxiedClass = ProxyFactory.createProxiedClass(identifier);
-        return ProxyFactory.createProxiedEntity(proxiedClass);
+        final T proxiedEntity = ProxyFactory.createProxiedEntity(proxiedClass);
+
+        return Cherry.client.create(proxiedEntity);
     }
 
     public static <T> T findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
