@@ -6,6 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EntityStorage {
     private final Map<String, Object> values = new ConcurrentHashMap<>();
 
+    public Map<String, Object> getValues() {
+        return this.values;
+    }
+
     public Object get(String field) {
         return this.values.get(field);
     }

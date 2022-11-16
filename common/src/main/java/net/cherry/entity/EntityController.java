@@ -7,6 +7,7 @@ public class EntityController<T> {
     private final Class<T> originClass;
     private final ProxiedClass<T> proxiedClass;
     private final EntityStorage storage;
+    private final EntityMetadata metadata;
 
     private EntityController<?> rootController;
 
@@ -15,6 +16,7 @@ public class EntityController<T> {
         this.originClass = originClass;
         this.proxiedClass = proxiedClass;
         this.storage = new EntityStorage();
+        this.metadata = new EntityMetadata(originClass);
     }
 
     public T getObject() {
@@ -31,6 +33,10 @@ public class EntityController<T> {
 
     public EntityStorage getStorage() {
         return this.storage;
+    }
+
+    public EntityMetadata getMetadata() {
+        return this.metadata;
     }
 
     public EntityController<?> getRootController() {

@@ -16,6 +16,10 @@ public class EntityControllerManager {
         return controller;
     }
 
+    public static boolean hasController(Object entity) {
+        return CONTROLLERS.containsKey(entity);
+    }
+
     public static void registerController(EntityController<?> controller) {
         CONTROLLERS.put(controller.getObject(), controller);
     }
