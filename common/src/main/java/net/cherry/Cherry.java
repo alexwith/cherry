@@ -1,5 +1,6 @@
 package net.cherry;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.cherry.annotation.Entity;
@@ -27,7 +28,7 @@ public class Cherry {
         return Cherry.client.create(proxiedEntity);
     }
 
-    public static <T> T findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public static <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
         Cherry.validateIdentifier(identifier);
 
         return Cherry.client.findMany(identifier, queryConsumer);
@@ -45,7 +46,7 @@ public class Cherry {
         return Cherry.client.count(identifier, queryConsumer);
     }
 
-    public static <T> CompletableFuture<T> findManyFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public static <T> CompletableFuture<Collection<T>> findManyFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
         return CherryExecutor.supplyFuture(() -> Cherry.findMany(identifier, queryConsumer));
     }
 

@@ -1,5 +1,6 @@
 package net.cherry.client;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 import net.cherry.query.Query;
 import net.cherry.query.impl.QueryImpl;
@@ -10,7 +11,7 @@ public interface CherryClient {
 
     <T> T create(T proxiedEntity);
 
-    <T> T findMany(Class<T> identifier, Consumer<Query> queryConsumer);
+    <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer);
 
     <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer);
 

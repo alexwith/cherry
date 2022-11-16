@@ -3,6 +3,7 @@ package net.cherry;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Filters;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -41,7 +42,7 @@ public class CherryMongoClient implements CherryClient {
     }
 
     @Override
-    public <T> T findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
         this.validateConnection();
 
         final Query query = this.handleQueryConsumer(queryConsumer);
