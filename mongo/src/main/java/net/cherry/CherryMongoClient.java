@@ -2,6 +2,7 @@ package net.cherry;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,20 +18,24 @@ import org.bson.conversions.Bson;
 
 public class CherryMongoClient implements CherryClient {
     private final String uri;
+    private final String databaseName;
 
     private MongoClient client;
+    private MongoDatabase database;
 
     private static final EntitySerializer SERIALIZER = new MongoEntitySerializer();
     private static final EntityDeserializer DESERIALIZER = new MongoEntityDeserializer();
 
-    public CherryMongoClient(String uri) {
+    public CherryMongoClient(String uri, String databaseName) {
         this.uri = uri;
+        this.databaseName = databaseName;
     }
 
     @Override
     public void connect() {
         try (final MongoClient client = MongoClients.create(this.uri)) {
             this.client = client;
+            this.database = client.getDatabase(this.databaseName);
         }
     }
 
