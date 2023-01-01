@@ -3,8 +3,8 @@ package net.cherry;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import net.cherry.annotation.Entity;
 import net.cherry.client.CherryClient;
+import net.cherry.entity.Entity;
 import net.cherry.proxy.ProxyFactory;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.query.Query;
@@ -21,29 +21,33 @@ public class Cherry {
         return client;
     }
 
-    public static <T> T create(Class<T> identifier) {
+    public static CherryClient client() {
+        return client;
+    }
+
+    public static <T extends Entity<T>> T create(Class<T> identifier) {
         final ProxiedClass<T> proxiedClass = ProxyFactory.createProxiedClass(identifier);
         final T proxiedEntity = ProxyFactory.createProxiedEntity(proxiedClass);
 
-        return Cherry.client.create(proxiedEntity);
+        return client().save(proxiedEntity);
     }
 
     public static <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
         Cherry.validateIdentifier(identifier);
 
-        return Cherry.client.findMany(identifier, queryConsumer);
+        return client().findMany(identifier, queryConsumer);
     }
 
     public static <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer) {
         Cherry.validateIdentifier(identifier);
 
-        return Cherry.client.findOne(identifier, queryConsumer);
+        return client().findOne(identifier, queryConsumer);
     }
 
     public static <T> int count(Class<T> identifier, Consumer<Query> queryConsumer) {
         Cherry.validateIdentifier(identifier);
 
-        return Cherry.client.count(identifier, queryConsumer);
+        return client().count(identifier, queryConsumer);
     }
 
     public static <T> CompletableFuture<Collection<T>> findManyFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
@@ -59,7 +63,7 @@ public class Cherry {
     }
 
     private static void validateIdentifier(Class<?> identifier) {
-        if (!identifier.isAnnotationPresent(Entity.class)) {
+        if (!Entity.class.isAssignableFrom(identifier)) {
             throw new IllegalStateException("EntityClient was provided with a non-entity object.");
         }
     }

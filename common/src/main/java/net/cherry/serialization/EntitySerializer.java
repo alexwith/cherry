@@ -1,6 +1,8 @@
 package net.cherry.serialization;
 
+import net.cherry.entity.Entity;
+
 public interface EntitySerializer<T> {
 
-    <U> T serialize(U entity);
+    <U extends Entity> T serialize(U entity);
 }

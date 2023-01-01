@@ -3,30 +3,34 @@ package test;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.cherry.annotation.Entity;
-import net.cherry.annotation.EntityDefaults;
+import java.util.function.UnaryOperator;
+import net.cherry.entity.Entity;
+import net.cherry.entity.EntitySettings;
 
-@Entity(database = "test")
-public class TestEntity {
+public class TestEntity implements Entity<TestEntity> {
     private final UUID id;
 
     private String name;
     private int age;
     private Map<String, Integer> accounts;
 
-    @EntityDefaults
-    private static final TestEntity DEFAULT = new TestEntity(
-        null,
-        "Anonymous",
-        0,
-        new HashMap<>()
-    );
-
     protected TestEntity(UUID id, String name, int age, Map<String, Integer> accounts) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.accounts = accounts;
+    }
+
+    @Override
+    public UnaryOperator<EntitySettings<TestEntity>> settings() {
+        return (settings) -> settings
+            .database("test")
+            .defaults(new TestEntity(
+                null,
+                "Anonymous",
+                0,
+                new HashMap<>()
+            ));
     }
 
     public UUID getId() {

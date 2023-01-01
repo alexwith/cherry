@@ -10,12 +10,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import net.cherry.client.CherryClient;
+import net.cherry.codec.Codec;
+import net.cherry.config.CodecConfig;
+import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityControllerManager;
-import net.cherry.entity.EntityMetadata;
+import net.cherry.entity.EntitySettings;
 import net.cherry.query.Query;
-import net.cherry.serialization.EntityDeserializer;
-import net.cherry.serialization.EntitySerializer;
 import net.cherry.serialization.MongoEntityDeserializer;
 import net.cherry.serialization.MongoEntitySerializer;
 import org.bson.BsonDocument;
@@ -32,8 +33,8 @@ public class CherryMongoClient implements CherryClient {
     private MongoDatabase database;
     private CodecRegistry codecRegistry;
 
-    private static final EntitySerializer<BsonDocument> SERIALIZER = new MongoEntitySerializer();
-    private static final EntityDeserializer DESERIALIZER = new MongoEntityDeserializer();
+    public static final MongoEntitySerializer SERIALIZER = new MongoEntitySerializer();
+    public static final MongoEntityDeserializer DESERIALIZER = new MongoEntityDeserializer();
 
     public CherryMongoClient(String uri, String databaseName) {
         this.uri = uri;
@@ -48,12 +49,12 @@ public class CherryMongoClient implements CherryClient {
     }
 
     @Override
-    public <T> T create(T proxiedEntity) {
+    public <T extends Entity<T>> T save(T proxiedEntity) {
         this.validateConnection();
 
         final EntityController<T> controller = EntityControllerManager.getController(proxiedEntity);
-        final EntityMetadata metadata = controller.getMetadata();
-        final MongoCollection<Document> collection = this.database.getCollection(metadata.getDatabase());
+        final EntitySettings<T> settings = controller.getSettings();
+        final MongoCollection<Document> collection = this.database.getCollection(settings.getDatabase());
 
         final Document document = this.bsonDocumentToDocument(SERIALIZER.serialize(proxiedEntity));
         collection.insertOne(document);
@@ -86,6 +87,11 @@ public class CherryMongoClient implements CherryClient {
         final Query query = this.handleQueryConsumer(queryConsumer);
 
         return 0;
+    }
+
+    @Override
+    public Collection<Codec<?, ?>> provideCodecs() {
+        return CodecConfig.MONGO_CODECS;
     }
 
     public static Bson queryToMongoQuery(Query query) {

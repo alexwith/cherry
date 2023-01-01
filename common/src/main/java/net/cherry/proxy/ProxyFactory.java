@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityControllerManager;
 import net.cherry.proxy.entity.ProxiedClass;
@@ -52,7 +53,7 @@ public class ProxyFactory {
         return proxiedClass;
     }
 
-    public static <T> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
+    public static <T extends Entity<T>> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
         final Constructor<T> constructor = proxiedClass.getConstructor();
 
         return SneakyThrows.supply(() -> {

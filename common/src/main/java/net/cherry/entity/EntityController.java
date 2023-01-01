@@ -2,11 +2,12 @@ package net.cherry.entity;
 
 import net.cherry.proxy.entity.ProxiedClass;
 
-public class EntityController<T> {
+public class EntityController<T extends Entity<T>> {
     private final T object;
     private final Class<T> originClass;
     private final ProxiedClass<T> proxiedClass;
     private final EntityStorage storage;
+    private final EntitySettings<T> settings;
     private final EntityMetadata metadata;
 
     private EntityController<?> rootController;
@@ -16,6 +17,7 @@ public class EntityController<T> {
         this.originClass = originClass;
         this.proxiedClass = proxiedClass;
         this.storage = new EntityStorage();
+        this.settings = object.settings().apply(new EntitySettings<>());
         this.metadata = new EntityMetadata(originClass);
     }
 
@@ -33,6 +35,10 @@ public class EntityController<T> {
 
     public EntityStorage getStorage() {
         return this.storage;
+    }
+
+    public EntitySettings<T> getSettings() {
+        return this.settings;
     }
 
     public EntityMetadata getMetadata() {
