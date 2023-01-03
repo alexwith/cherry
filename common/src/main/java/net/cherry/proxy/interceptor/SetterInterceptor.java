@@ -24,21 +24,19 @@ public class SetterInterceptor implements Interceptor {
             .intercept(MethodDelegation.to(SetterInterceptor.class));
     }
 
-
     @RuntimeType
-    public static Object intercept(@This Entity<?> entity, @Origin Method method, @AllArguments Object[] args) {
+    public static void intercept(@This Entity<?> entity, @Origin Method method, @AllArguments Object[] args) {
         final EntityController<?> controller = entity.getController();
         final ProxiedClass<?> proxiedClass = controller.getProxiedClass();
         final ProxyField field = proxiedClass.getField(method);
         if (field == null) {
-            return SneakyThrows.supply(() -> method.invoke(entity));
+            SneakyThrows.supply(() -> method.invoke(entity));
+            return;
         }
 
         final Object value = args[0];
 
         final EntityStorage storage = controller.getStorage();
         storage.set(field.getPath(), value);
-
-        return null;
     }
 }

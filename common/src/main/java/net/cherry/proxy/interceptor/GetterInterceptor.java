@@ -33,8 +33,6 @@ public class GetterInterceptor implements Interceptor {
         }
 
         final EntityStorage storage = controller.getStorage();
-        final Object value = storage.get(field.getPath());
-
-        return value;
+        return storage.get(field.getPath());
     }
 }
