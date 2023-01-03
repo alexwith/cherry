@@ -8,8 +8,8 @@ import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
+import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityControllerManager;
 import net.cherry.entity.EntityStorage;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.entity.ProxyField;
@@ -26,8 +26,8 @@ public class SetterInterceptor implements Interceptor {
 
 
     @RuntimeType
-    public static Object intercept(@This Object entity, @Origin Method method, @AllArguments Object[] args) {
-        final EntityController<?> controller = EntityControllerManager.getController(entity);
+    public static Object intercept(@This Entity<?> entity, @Origin Method method, @AllArguments Object[] args) {
+        final EntityController<?> controller = entity.getController();
         final ProxiedClass<?> proxiedClass = controller.getProxiedClass();
         final ProxyField field = proxiedClass.getField(method);
         if (field == null) {

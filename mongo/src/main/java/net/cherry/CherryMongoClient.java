@@ -14,7 +14,6 @@ import net.cherry.codec.Codec;
 import net.cherry.config.CodecConfig;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityControllerManager;
 import net.cherry.entity.EntitySettings;
 import net.cherry.query.Query;
 import net.cherry.serialization.MongoEntityDeserializer;
@@ -52,7 +51,7 @@ public class CherryMongoClient implements CherryClient {
     public <T extends Entity<T>> T save(T proxiedEntity) {
         this.validateConnection();
 
-        final EntityController<T> controller = EntityControllerManager.getController(proxiedEntity);
+        final EntityController<T> controller = proxiedEntity.getController();
         final EntitySettings<T> settings = controller.getSettings();
         final MongoCollection<Document> collection = this.database.getCollection(settings.getDatabase());
 

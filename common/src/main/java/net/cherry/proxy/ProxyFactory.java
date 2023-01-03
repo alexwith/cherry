@@ -1,6 +1,7 @@
 package net.cherry.proxy;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,7 +9,6 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityControllerManager;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.interceptor.GetterInterceptor;
 import net.cherry.proxy.interceptor.Interceptor;
@@ -37,6 +37,8 @@ public class ProxyFactory {
 
         Builder<?> builder = new ByteBuddy().subclass(originClass);
 
+        builder = builder.defineProperty("controller", EntityController.class);
+
         for (final Interceptor interceptor : INTERCEPTORS) {
             builder = interceptor.create(builder);
         }
@@ -61,7 +63,9 @@ public class ProxyFactory {
             final Class<T> originClass = proxiedClass.getOriginClass();
             final EntityController<T> controller = new EntityController<>(entity, originClass, proxiedClass);
 
-            EntityControllerManager.registerController(controller);
+            final Field controllerField = proxiedClass.getClazz().getDeclaredField("controller");
+            controllerField.setAccessible(true);
+            controllerField.set(entity, controller);
 
             return entity;
         });

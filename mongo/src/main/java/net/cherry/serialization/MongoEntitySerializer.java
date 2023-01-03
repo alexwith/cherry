@@ -5,7 +5,6 @@ import net.cherry.Cherry;
 import net.cherry.codec.Codec;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityControllerManager;
 import net.cherry.entity.EntityStorage;
 import org.bson.BsonDocument;
 import org.bson.BsonNull;
@@ -16,7 +15,7 @@ public class MongoEntitySerializer implements EntitySerializer<BsonDocument> {
 
     @Override
     public <T extends Entity> BsonDocument serialize(T entity) {
-        final EntityController controller = EntityControllerManager.getController(entity);
+        final EntityController controller = entity.getController();
         final EntityStorage storage = controller.getStorage();
 
         final BsonDocument document = new BsonDocument();
@@ -28,8 +27,8 @@ public class MongoEntitySerializer implements EntitySerializer<BsonDocument> {
     }
 
     public BsonValue serializeValue(Object value) {
-        if (EntityControllerManager.hasController(value)) {
-            return this.serialize((Entity) value);
+        if (value instanceof final Entity<?> entity) {
+            return this.serialize(entity);
         }
 
         return this.encode(value);

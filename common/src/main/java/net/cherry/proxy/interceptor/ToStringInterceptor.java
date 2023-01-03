@@ -5,8 +5,8 @@ import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
+import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityControllerManager;
 
 public class ToStringInterceptor implements Interceptor {
 
@@ -18,8 +18,8 @@ public class ToStringInterceptor implements Interceptor {
     }
 
     @RuntimeType
-    public static Object intercept(@This Object entity) {
-        final EntityController<?> controller = EntityControllerManager.getController(entity);
+    public static Object intercept(@This Entity<?> entity) {
+        final EntityController<?> controller = entity.getController();
 
         return controller.getDetailedName();
     }
