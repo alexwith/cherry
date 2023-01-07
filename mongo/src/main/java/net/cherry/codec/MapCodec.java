@@ -46,7 +46,7 @@ public class MapCodec implements MongoCodec<Map<?, ?>> {
     }
 
     @Override
-    public boolean isValid(Object object) {
-        return Map.class.isAssignableFrom(object.getClass());
+    public boolean isValid(Class<?> clazz) {
+        return Map.class.isAssignableFrom(clazz);
     }
 }

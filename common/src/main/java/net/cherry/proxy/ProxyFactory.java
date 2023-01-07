@@ -9,6 +9,8 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
+import net.cherry.entity.EntityMetadata;
+import net.cherry.entity.EntityStorage;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.interceptor.GetterInterceptor;
 import net.cherry.proxy.interceptor.Interceptor;
@@ -55,13 +57,19 @@ public class ProxyFactory {
         return proxiedClass;
     }
 
-    public static <T extends Entity<T>> T createProxiedEntity(ProxiedClass<T> proxiedClass) {
+    public static <T extends Entity<T>> T createProxiedEntity(ProxiedClass<T> proxiedClass, Object id) {
         final Constructor<T> constructor = proxiedClass.getConstructor();
 
         return SneakyThrows.supply(() -> {
             final T entity = constructor.newInstance(proxiedClass.getEmptyConstructorArgs());
             final Class<T> originClass = proxiedClass.getOriginClass();
             final EntityController<T> controller = new EntityController<>(entity, originClass, proxiedClass);
+            final EntityMetadata metadata = controller.getMetadata();
+            final EntityStorage storage = controller.getStorage();
+
+            if (id != null) {
+                storage.set(metadata.getIdField(), id);
+            }
 
             final Field controllerField = proxiedClass.getClazz().getDeclaredField("controller");
             controllerField.setAccessible(true);

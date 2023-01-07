@@ -2,14 +2,17 @@ package net.cherry.config;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import net.cherry.codec.Codec;
 import net.cherry.codec.MapCodec;
+import net.cherry.codec.MongoCodec;
 import net.cherry.codec.PrimitiveCodec;
 import net.cherry.codec.StringCodec;
 import org.bson.BsonDouble;
 import org.bson.BsonInt32;
 import org.bson.BsonInt64;
 import org.bson.BsonString;
+import org.bson.BsonValue;
 
 public interface CodecConfig {
 
@@ -62,6 +65,23 @@ public interface CodecConfig {
             Integer.class
         ),
         new StringCodec(),
-        new MapCodec()
+        new MapCodec(),
+        new MongoCodec<UUID>() {
+
+            @Override
+            public boolean isValid(Class<?> clazz) {
+                return UUID.class.isAssignableFrom(clazz);
+            }
+
+            @Override
+            public UUID decode(BsonValue toDecode) {
+                return UUID.fromString(toDecode.asString().getValue());
+            }
+
+            @Override
+            public BsonValue encode(UUID toEncode) {
+                return new BsonString(toEncode.toString());
+            }
+        }
     );
 }

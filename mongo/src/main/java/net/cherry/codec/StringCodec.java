@@ -16,7 +16,7 @@ public class StringCodec implements MongoCodec<String> {
     }
 
     @Override
-    public boolean isValid(Object object) {
-        return object instanceof String;
+    public boolean isValid(Class<?> clazz) {
+        return String.class.isAssignableFrom(clazz);
     }
 }

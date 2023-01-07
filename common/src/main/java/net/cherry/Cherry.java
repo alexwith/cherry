@@ -27,9 +27,12 @@ public class Cherry {
 
     public static <T extends Entity<T>> T create(Class<T> identifier) {
         final ProxiedClass<T> proxiedClass = ProxyFactory.createProxiedClass(identifier);
-        final T proxiedEntity = ProxyFactory.createProxiedEntity(proxiedClass);
+        return ProxyFactory.createProxiedEntity(proxiedClass, null);
+    }
 
-        return client().save(proxiedEntity);
+    public static <T extends Entity<T>> T createWithId(Class<T> identifier, Object id) {
+        final ProxiedClass<T> proxiedClass = ProxyFactory.createProxiedClass(identifier);
+        return ProxyFactory.createProxiedEntity(proxiedClass, id);
     }
 
     public static <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer) {

@@ -43,6 +43,10 @@ public class ProxiedClass<T> {
         return this.emptyConstructorArgs;
     }
 
+    public Map<String, ProxyField> getFields() {
+        return this.fields;
+    }
+
     public void addField(ProxyField field) {
         this.fields.put(field.getPath(), field);
     }

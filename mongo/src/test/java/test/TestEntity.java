@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+import net.cherry.annotation.EntityId;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntitySettings;
 
 public class TestEntity implements Entity<TestEntity> {
+
+    @EntityId
     private final UUID id;
 
     private String name;

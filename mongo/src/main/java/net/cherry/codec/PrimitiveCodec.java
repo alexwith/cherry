@@ -25,7 +25,7 @@ public class PrimitiveCodec<T> implements MongoCodec<T> {
     }
 
     @Override
-    public boolean isValid(Object object) {
-        return this.types.contains(object.getClass());
+    public boolean isValid(Class<?> clazz) {
+        return this.types.contains(clazz);
     }
 }

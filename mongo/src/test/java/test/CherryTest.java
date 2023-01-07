@@ -1,22 +1,22 @@
 package test;
 
 import java.util.HashMap;
+import java.util.UUID;
 import net.cherry.Cherry;
 import net.cherry.CherryMongoClient;
-import net.cherry.proxy.ProxyFactory;
-import net.cherry.proxy.entity.ProxiedClass;
 
 public class CherryTest {
 
     public static void main(String[] args) {
         Cherry.connect(new CherryMongoClient("mongodb://localhost:27017", "test"));
 
-        final TestEntity entity = Cherry.create(TestEntity.class);
+        final TestEntity entity = Cherry.createWithId(TestEntity.class, UUID.randomUUID());
+
         entity.setAccounts(new HashMap<>());
         entity.getAccounts().put("bob", 100);
         entity.getAccounts().put("bobby", 40);
 
-        entity.setAge(10);
+        entity.setAge(20);
 
         Cherry.client().save(entity);
 
