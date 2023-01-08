@@ -2,7 +2,6 @@ package net.cherry;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import net.cherry.client.CherryClient;
 import net.cherry.codec.CodecRegistry;
 import net.cherry.entity.Entity;
@@ -49,28 +48,28 @@ public class Cherry {
         return client().findMany(identifier, query);
     }
 
-    public static <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public static <T extends Entity<T>> T findOne(Class<T> identifier, Query query) {
         Cherry.validateIdentifier(identifier);
 
-        return client().findOne(identifier, queryConsumer);
+        return client().findOne(identifier, query);
     }
 
-    public static <T> int count(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public static <T extends Entity<T>> long count(Class<T> identifier, Query query) {
         Cherry.validateIdentifier(identifier);
 
-        return client().count(identifier, queryConsumer);
+        return client().count(identifier, query);
     }
 
     public static <T extends Entity<T>> CompletableFuture<Collection<T>> findManyFuture(Class<T> identifier, Query query) {
         return CherryExecutor.supplyFuture(() -> Cherry.findMany(identifier, query));
     }
 
-    public static <T> CompletableFuture<T> findOneFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
-        return CherryExecutor.supplyFuture(() -> Cherry.findOne(identifier, queryConsumer));
+    public static <T extends Entity<T>> CompletableFuture<T> findOneFuture(Class<T> identifier, Query query) {
+        return CherryExecutor.supplyFuture(() -> Cherry.findOne(identifier, query));
     }
 
-    public static <T> CompletableFuture<Integer> countFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
-        return CherryExecutor.supplyFuture(() -> Cherry.count(identifier, queryConsumer));
+    public static <T extends Entity<T>> CompletableFuture<Long> countFuture(Class<T> identifier, Query query) {
+        return CherryExecutor.supplyFuture(() -> Cherry.count(identifier, query));
     }
 
     private static void validateIdentifier(Class<?> identifier) {

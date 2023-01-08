@@ -9,7 +9,7 @@ import com.mongodb.client.model.Filters;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import net.cherry.client.CherryClient;
 import net.cherry.codec.Codec;
 import net.cherry.config.CodecConfig;
@@ -55,6 +55,7 @@ public class CherryMongoClient implements CherryClient {
 
         final EntityController<T> controller = proxiedEntity.getController();
         final EntitySettings<T> settings = controller.getSettings();
+        
         final MongoCollection<Document> collection = this.database.getCollection(settings.getDatabase());
 
         final Document document = this.bsonDocumentToDocument(SERIALIZER.serialize(proxiedEntity));
@@ -67,36 +68,42 @@ public class CherryMongoClient implements CherryClient {
     public <T extends Entity<T>> Collection<T> findMany(Class<T> identifier, Query query) {
         this.validateConnection();
 
+        return this.applyCollection(identifier, (collection) -> {
+            final Bson bsonQuery = this.queryToMongoQuery(query);
+            final FindIterable<Document> documents = collection.find(bsonQuery);
+
+            final List<T> entities = new ArrayList<>();
+            for (final Document document : documents) {
+                final T entity = DESERIALIZER.deserialize(identifier, document.toBsonDocument());
+                entities.add(entity);
+            }
+
+            return entities;
+        });
+    }
+
+    @Override
+    public <T extends Entity<T>> T findOne(Class<T> identifier, Query query) {
+        this.validateConnection();
+
+        return this.applyCollection(identifier, (collection) -> {
+            final Bson bsonQuery = this.queryToMongoQuery(query);
+            final Document document = collection.find(bsonQuery).first();
+            if (document == null) {
+                return null;
+            }
+
+            return DESERIALIZER.deserialize(identifier, document.toBsonDocument());
+        });
+    }
+
+    @Override
+    public <T extends Entity<T>> long count(Class<T> identifier, Query query) {
+        this.validateConnection();
+
         final Bson bsonQuery = this.queryToMongoQuery(query);
-
         final MongoCollection<Document> collection = this.database.getCollection("test");
-        final FindIterable<Document> documents = collection.find(bsonQuery);
-
-        final List<T> entities = new ArrayList<>();
-        for (final Document document : documents) {
-            final T entity = DESERIALIZER.deserialize(identifier, document.toBsonDocument());
-            entities.add(entity);
-        }
-
-        return entities;
-    }
-
-    @Override
-    public <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer) {
-        this.validateConnection();
-
-        final Query query = this.handleQueryConsumer(queryConsumer);
-
-        return null;
-    }
-
-    @Override
-    public <T> int count(Class<T> identifier, Consumer<Query> queryConsumer) {
-        this.validateConnection();
-
-        final Query query = this.handleQueryConsumer(queryConsumer);
-
-        return 0;
+        return collection.countDocuments(bsonQuery);
     }
 
     @Override
@@ -108,6 +115,13 @@ public class CherryMongoClient implements CherryClient {
         if (this.client == null) {
             throw new IllegalStateException("A MongoDB connection has not been established.");
         }
+    }
+
+    private <T, U extends Entity<U>> T applyCollection(Class<U> identifier, Function<MongoCollection<Document>, T> applier) {
+        final String collectionName = this.getDatabase(identifier);
+        final MongoCollection<Document> collection = this.database.getCollection(collectionName);
+
+        return applier.apply(collection);
     }
 
     private Document bsonDocumentToDocument(BsonDocument document) {
