@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import net.cherry.client.CherryClient;
+import net.cherry.codec.CodecRegistry;
 import net.cherry.entity.Entity;
 import net.cherry.proxy.ProxyFactory;
 import net.cherry.proxy.entity.ProxiedClass;
@@ -13,16 +14,23 @@ import net.cherry.thread.CherryExecutor;
 public class Cherry {
     private static CherryClient client;
 
+    private static final CodecRegistry CODEC_REGISTRY = new CodecRegistry();
+
     public static CherryClient connect(CherryClient client) {
         Cherry.client = client;
 
         client.connect();
+        CODEC_REGISTRY.register(client.provideCodecs());
 
         return client;
     }
 
     public static CherryClient client() {
         return client;
+    }
+
+    public static CodecRegistry codecRegistry() {
+        return CODEC_REGISTRY;
     }
 
     public static <T extends Entity<T>> T create(Class<T> identifier) {

@@ -1,13 +1,36 @@
 package test;
 
+import java.util.Collection;
+import java.util.UUID;
 import net.cherry.Cherry;
 import net.cherry.CherryMongoClient;
+import net.cherry.codec.MongoCodec;
 import net.cherry.query.Query;
+import org.bson.BsonString;
+import org.bson.BsonValue;
 
 public class CherryTest {
 
     public static void main(String[] args) {
         Cherry.connect(new CherryMongoClient("mongodb://localhost:27017", "test"));
+
+        Cherry.codecRegistry().register(new MongoCodec<UUID>() {
+
+            @Override
+            public boolean isValid(Class<?> clazz) {
+                return UUID.class.isAssignableFrom(clazz);
+            }
+
+            @Override
+            public UUID decode(BsonValue toDecode) {
+                return UUID.fromString(toDecode.asString().getValue());
+            }
+
+            @Override
+            public BsonValue encode(UUID toEncode) {
+                return new BsonString(toEncode.toString());
+            }
+        });
 
         /*final TestEntity entity = Cherry.createWithId(TestEntity.class, UUID.randomUUID());
 
@@ -19,20 +42,9 @@ public class CherryTest {
 
         Cherry.client().save(entity);*/
 
-        for (final TestEntity entity : Cherry.findMany(TestEntity.class, Query.all())) {
-            System.out.println("ayo: " + entity.getId() + " -> " + entity.getAge());
+        final Collection<TestEntity> entities = Cherry.findMany(TestEntity.class, Query.all());
+        for (final TestEntity entity : entities) {
+            System.out.println("ayo: " + entity.getId() + " -> " + entity.getAge() + " -> " + entity.getAccounts().keySet());
         }
-
-        //Query.and(Query.equals("bob", 5), Query.lessThan("bobby", 10));
-        /*System.out.println("oke: " + entity.getAccounts().get("bob"));
-
-        final Collection<TestEntity> entities = Cherry.findMany(TestEntity.class, Query::all);*/
-
-        /*.where("age", (options) -> options
-                .sortBy(SortingOrder.ASCENDING)
-            )
-            .where("name", (options) -> options
-                .endsWith("x")
-            )*/
     }
 }
