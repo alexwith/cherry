@@ -9,7 +9,7 @@ import net.cherry.entity.EntityStorage;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.entity.ProxyField;
 import net.cherry.proxy.entity.ProxyMetadata;
-import net.cherry.type.FieldType;
+import net.cherry.type.TypeHolder;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 
@@ -27,7 +27,7 @@ public class MongoEntityDeserializer implements EntityDeserializer<BsonDocument>
         final CodecRegistry codecRegistry = Cherry.codecRegistry();
         for (final ProxyField field : proxiedClass.getFields().values()) {
             final String path = field.getPath();
-            final FieldType type = field.getType();
+            final TypeHolder type = field.getType();
             final boolean isIdField = metadata.getIdField().equals(path);
 
             final BsonValue value = serializedEntity.get(isIdField ? "_id" : path);
@@ -35,8 +35,8 @@ public class MongoEntityDeserializer implements EntityDeserializer<BsonDocument>
                 continue;
             }
 
-            final Codec codec = codecRegistry.lookup(type);
-            storage.set(path, codec.decode(value));
+            final Codec codec = codecRegistry.lookup(type.getType());
+            storage.set(path, codec.decode(value, type.getTypeArgs()));
         }
 
         return entity;

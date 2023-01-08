@@ -2,5 +2,5 @@ package net.cherry.codec;
 
 public interface Codec<T, U> extends Encoder<T, U>, Decoder<T, U> {
 
-    boolean isValid(Class<?> clazz);
+    boolean isValid(Class<?> type);
 }

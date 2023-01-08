@@ -16,48 +16,48 @@ public interface CodecConfig {
     Collection<Codec<?, ?>> MONGO_CODECS = List.of(
         new PrimitiveCodec<Byte>(
             BsonInt32::new,
-            (value) -> (byte) value.asInt32().getValue(),
+            (value, $) -> (byte) value.asInt32().getValue(),
             byte.class,
             Byte.class
         ),
         new PrimitiveCodec<Short>(
             BsonInt32::new,
-            (value) -> (short) value.asInt32().getValue(),
+            (value, $) -> (short) value.asInt32().getValue(),
             short.class,
             Short.class
         ),
         new PrimitiveCodec<>(
             BsonInt32::new,
-            (value) -> value.asInt32().getValue(),
+            (value, $) -> value.asInt32().getValue(),
             int.class,
             Integer.class
         ),
         new PrimitiveCodec<>(
-            BsonInt64::new, (value) -> value.asInt64().getValue(),
+            BsonInt64::new, (value, $) -> value.asInt64().getValue(),
             long.class,
             Long.class
         ),
         new PrimitiveCodec<Float>(
             BsonDouble::new,
-            (value) -> (float) value.asDouble().getValue(),
+            (value, $) -> (float) value.asDouble().getValue(),
             float.class,
             Float.class
         ),
         new PrimitiveCodec<>(
             BsonDouble::new,
-            (value) -> value.asDouble().getValue(),
+            (value, $) -> value.asDouble().getValue(),
             double.class,
             Double.class
         ),
         new PrimitiveCodec<>(
             (character) -> new BsonString(String.valueOf(character)),
-            (value) -> value.asString().getValue().charAt(0),
+            (value, $) -> value.asString().getValue().charAt(0),
             char.class,
             Character.class
         ),
         new PrimitiveCodec<>(
             BsonInt32::new,
-            (value) -> value.asInt32().getValue(),
+            (value, $) -> value.asInt32().getValue(),
             int.class,
             Integer.class
         ),

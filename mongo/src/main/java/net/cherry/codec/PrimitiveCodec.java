@@ -1,5 +1,6 @@
 package net.cherry.codec;
 
+import java.lang.reflect.Type;
 import java.util.Set;
 import org.bson.BsonValue;
 
@@ -20,8 +21,8 @@ public class PrimitiveCodec<T> implements MongoCodec<T> {
     }
 
     @Override
-    public T decode(BsonValue toDecode) {
-        return this.decoder.decode(toDecode);
+    public T decode(BsonValue toDecode, Type[] typeArgs) {
+        return this.decoder.decode(toDecode, typeArgs);
     }
 
     @Override

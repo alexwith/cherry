@@ -1,5 +1,6 @@
 package test;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.UUID;
 import net.cherry.Cherry;
@@ -22,7 +23,7 @@ public class CherryTest {
             }
 
             @Override
-            public UUID decode(BsonValue toDecode) {
+            public UUID decode(BsonValue toDecode, Type[] typeArgs) {
                 return UUID.fromString(toDecode.asString().getValue());
             }
 

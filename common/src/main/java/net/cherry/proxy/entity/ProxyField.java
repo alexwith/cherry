@@ -1,17 +1,17 @@
 package net.cherry.proxy.entity;
 
 import java.lang.reflect.Field;
-import net.cherry.type.FieldType;
+import net.cherry.type.TypeHolder;
 
 public class ProxyField {
     private final Field field;
     private final String path;
-    private final FieldType type;
+    private final TypeHolder type;
 
     public ProxyField(Field field) {
         this.field = field;
         this.path = field.getName();
-        this.type = new FieldType(field.getType());
+        this.type = new TypeHolder(field);
     }
 
     public Field getField() {
@@ -22,7 +22,7 @@ public class ProxyField {
         return this.path;
     }
 
-    public FieldType getType() {
+    public TypeHolder getType() {
         return this.type;
     }
 }

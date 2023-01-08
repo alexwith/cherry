@@ -1,21 +1,21 @@
 package net.cherry.codec;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.cherry.type.FieldType;
 
 public class CodecRegistry {
     private final List<Codec<?, ?>> codecs = new ArrayList<>();
-    private final Map<Class<?>, Codec<?, ?>> codecLookupCache = new HashMap<>();
+    private final Map<Type, Codec<?, ?>> codecLookupCache = new HashMap<>();
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Codec lookup(FieldType fieldType) {
-        return this.codecLookupCache.computeIfAbsent(fieldType.getType(), (type) -> {
+    @SuppressWarnings("rawtypes")
+    public Codec lookup(Type type) {
+        return this.codecLookupCache.computeIfAbsent(type, ($) -> {
             for (final Codec codec : this.codecs) {
-                if (!codec.isValid(type)) {
+                if (!codec.isValid((Class<?>) type)) {
                     continue;
                 }
 
