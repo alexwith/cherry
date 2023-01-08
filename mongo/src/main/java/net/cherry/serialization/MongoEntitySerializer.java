@@ -5,8 +5,9 @@ import net.cherry.Cherry;
 import net.cherry.codec.Codec;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
-import net.cherry.entity.EntityMetadata;
 import net.cherry.entity.EntityStorage;
+import net.cherry.proxy.entity.ProxiedClass;
+import net.cherry.proxy.entity.ProxyMetadata;
 import org.bson.BsonDocument;
 import org.bson.BsonNull;
 import org.bson.BsonValue;
@@ -17,9 +18,10 @@ public class MongoEntitySerializer implements EntitySerializer<BsonDocument> {
     @Override
     public <T extends Entity> BsonDocument serialize(T entity) {
         final EntityController controller = entity.getController();
-        final EntityMetadata metadata = controller.getMetadata();
         final EntityStorage storage = controller.getStorage();
-        
+        final ProxiedClass<T> proxiedClass = controller.getProxiedClass();
+        final ProxyMetadata metadata = proxiedClass.getMetadata();
+
         final BsonDocument document = new BsonDocument();
         for (final Entry<String, Object> field : storage.getValues().entrySet()) {
             final String path = field.getKey();

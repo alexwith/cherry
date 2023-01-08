@@ -13,7 +13,7 @@ public interface CherryClient {
 
     <T extends Entity<T>> T save(T proxiedEntity);
 
-    <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer);
+    <T extends Entity<T>> Collection<T> findMany(Class<T> identifier, Query query);
 
     <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer);
 
@@ -22,7 +22,7 @@ public interface CherryClient {
     Collection<Codec<?, ?>> provideCodecs();
 
     default Query handleQueryConsumer(Consumer<Query> queryConsumer) {
-        final Query query = new QueryImpl();
+        final Query query = null;//new QueryImpl();
         queryConsumer.accept(query);
 
         return query;

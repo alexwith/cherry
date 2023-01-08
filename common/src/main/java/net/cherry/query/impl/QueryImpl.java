@@ -1,28 +1,31 @@
 package net.cherry.query.impl;
 
-import java.util.function.Consumer;
 import net.cherry.query.Query;
-import net.cherry.query.QueryOptions;
+import net.cherry.query.QueryOperation;
 
 public class QueryImpl implements Query {
+    private final QueryOperation operation;
+    private final String field;
+    private final Object[] values;
 
-    @Override
-    public Query all() {
-        return this;
+    public QueryImpl(QueryOperation operation, String field, Object... values) {
+        this.operation = operation;
+        this.field = field;
+        this.values = values;
     }
 
     @Override
-    public Query all(Consumer<QueryOptions> optionsConsumer) {
-        return this;
+    public QueryOperation getOperation() {
+        return this.operation;
     }
 
     @Override
-    public Query where(String field, Object value) {
-        return this;
+    public String getField() {
+        return this.field;
     }
 
     @Override
-    public Query where(String field, Consumer<QueryOptions> optionsConsumer) {
-        return this;
+    public Object[] getValues() {
+        return this.values;
     }
 }

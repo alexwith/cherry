@@ -14,6 +14,7 @@ public class ProxiedClass<T> {
     private final Class<T> clazz;
     private final Class<T> originClass;
     private final Constructor<T> constructor;
+    private final ProxyMetadata metadata;
     private final Object[] emptyConstructorArgs;
     private final Map<String, ProxyField> fields = new HashMap<>();
 
@@ -23,6 +24,7 @@ public class ProxiedClass<T> {
     public ProxiedClass(Class<T> clazz, Class<T> originClass) {
         this.clazz = clazz;
         this.originClass = originClass;
+        this.metadata = new ProxyMetadata(originClass);
         this.constructor = (Constructor<T>) clazz.getDeclaredConstructors()[0];
         this.emptyConstructorArgs = this.createEmptyConstructorArgs();
     }
@@ -33,6 +35,10 @@ public class ProxiedClass<T> {
 
     public Class<T> getOriginClass() {
         return this.originClass;
+    }
+
+    public ProxyMetadata getMetadata() {
+        return this.metadata;
     }
 
     public Constructor<T> getConstructor() {

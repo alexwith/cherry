@@ -1,12 +1,12 @@
-package net.cherry.entity;
+package net.cherry.proxy.entity;
 
 import java.lang.reflect.Field;
 import net.cherry.annotation.EntityId;
 
-public class EntityMetadata {
+public class ProxyMetadata {
     private String idField;
 
-    public EntityMetadata(Class<?> originalClass) {
+    public ProxyMetadata(Class<?> originalClass) {
         this.retrieveMetadata(originalClass);
     }
 

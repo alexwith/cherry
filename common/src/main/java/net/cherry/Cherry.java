@@ -35,10 +35,10 @@ public class Cherry {
         return ProxyFactory.createProxiedEntity(proxiedClass, id);
     }
 
-    public static <T> Collection<T> findMany(Class<T> identifier, Consumer<Query> queryConsumer) {
+    public static <T extends Entity<T>> Collection<T> findMany(Class<T> identifier, Query query) {
         Cherry.validateIdentifier(identifier);
 
-        return client().findMany(identifier, queryConsumer);
+        return client().findMany(identifier, query);
     }
 
     public static <T> T findOne(Class<T> identifier, Consumer<Query> queryConsumer) {
@@ -53,8 +53,8 @@ public class Cherry {
         return client().count(identifier, queryConsumer);
     }
 
-    public static <T> CompletableFuture<Collection<T>> findManyFuture(Class<T> identifier, Consumer<Query> queryConsumer) {
-        return CherryExecutor.supplyFuture(() -> Cherry.findMany(identifier, queryConsumer));
+    public static <T extends Entity<T>> CompletableFuture<Collection<T>> findManyFuture(Class<T> identifier, Query query) {
+        return CherryExecutor.supplyFuture(() -> Cherry.findMany(identifier, query));
     }
 
     public static <T> CompletableFuture<T> findOneFuture(Class<T> identifier, Consumer<Query> queryConsumer) {

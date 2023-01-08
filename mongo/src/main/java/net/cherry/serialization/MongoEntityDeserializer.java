@@ -7,6 +7,7 @@ import net.cherry.entity.EntityController;
 import net.cherry.entity.EntityStorage;
 import net.cherry.proxy.entity.ProxiedClass;
 import net.cherry.proxy.entity.ProxyField;
+import net.cherry.proxy.entity.ProxyMetadata;
 import net.cherry.type.FieldType;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
@@ -20,13 +21,19 @@ public class MongoEntityDeserializer implements EntityDeserializer<BsonDocument>
         final EntityController<U> controller = entity.getController();
         final EntityStorage storage = controller.getStorage();
         final ProxiedClass<U> proxiedClass = controller.getProxiedClass();
+        final ProxyMetadata metadata = proxiedClass.getMetadata();
 
         for (final ProxyField field : proxiedClass.getFields().values()) {
             final String path = field.getPath();
             final FieldType type = field.getType();
-            final BsonValue value = serializedEntity.get(path);
-            final Codec codec = this.getCodec(type);
+            final boolean isIdField = metadata.getIdField().equals(path);
 
+            final BsonValue value = serializedEntity.get(isIdField ? "_id" : path);
+            if (value == null || value.isNull()) {
+                continue;
+            }
+
+            final Codec codec = this.getCodec(type);
             storage.set(path, codec.decode(value));
         }
 
