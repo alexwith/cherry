@@ -9,8 +9,10 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.cherry.entity.Entity;
 import net.cherry.entity.EntityController;
+import net.cherry.entity.EntitySettings;
 import net.cherry.entity.EntityStorage;
 import net.cherry.proxy.entity.ProxiedClass;
+import net.cherry.proxy.entity.ProxyField;
 import net.cherry.proxy.entity.ProxyMetadata;
 import net.cherry.proxy.interceptor.GetterInterceptor;
 import net.cherry.proxy.interceptor.Interceptor;
@@ -66,6 +68,22 @@ public class ProxyFactory {
             final Class<T> originClass = proxiedClass.getOriginClass();
             final EntityController<T> controller = new EntityController<>(entity, originClass, proxiedClass);
             final EntityStorage storage = controller.getStorage();
+            final EntitySettings<T> settings = controller.getSettings();
+
+            final T defaultEntity = settings.getDefaultEntity();
+            if (defaultEntity != null) {
+                for (final ProxyField proxyField : proxiedClass.getFields().values()) {
+                    final Field field = proxyField.getField();
+                    field.setAccessible(true);
+
+                    final Object value = field.get(defaultEntity);
+                    if (value == null) {
+                        continue;
+                    }
+
+                    storage.set(proxyField.getPath(), value);
+                }
+            }
 
             if (id != null) {
                 storage.set(metadata.getIdField(), id);
