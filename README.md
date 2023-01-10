@@ -1,15 +1,12 @@
-# Cherry
-***
+# 🍒 Cherry
 
 Cherry is an ORM (Object-relational mapping) tool that tries to achieve a simple and logic way of interacting with databases. While at
 the same time avoiding bloated dependencies and the requirement to install IDE plugins for code generation.
 
 ## Download
-***
-If you want to utilize **Cherry**, you will either have to build it locally or depend on it.
+If you want to utilize Cherry, you will either have to build it locally or depend on it.
 
 ### Building from source
-***
 Java 17 and Git are required to clone and build Cherry. Cloning and building can be done with the following commands. 
 
 ```
@@ -35,7 +32,6 @@ dependencies {
 ```
 
 ## Usage
-***
 Underneath you can see some simple examples of how to utilize Cherry using the mongo client.
 
 ### Example Entity
@@ -97,6 +93,5 @@ Cherry.connect(new CherryMongoClient("mongodb://localhost:27017", "database"));
 ```
 
 ## License
-***
 Cherry is free and open source software. The software is released under the terms of
 the [GPL-3.0 license]("https://github.com/alexwith/cherry/blob/main/LICENSE").
