@@ -1,6 +1,6 @@
-package test;
+package net.cherry.test.entity;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -15,13 +15,15 @@ public class TestEntity implements Entity<TestEntity> {
 
     private String name;
     private int age;
-    private Map<String, Integer> accounts;
+    private List<String> todo;
+    private Map<String, Integer> items;
 
-    protected TestEntity(UUID id, String name, int age, Map<String, Integer> accounts) {
+    protected TestEntity(UUID id, String name, int age, List<String> todo, Map<String, Integer> items) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.accounts = accounts;
+        this.todo = todo;
+        this.items = items;
     }
 
     @Override
@@ -30,9 +32,15 @@ public class TestEntity implements Entity<TestEntity> {
             .database("test")
             .defaults(new TestEntity(
                 null,
-                "Anonymous",
-                0,
-                new HashMap<>()
+                "Bob",
+                18,
+                List.of(
+                    "Do the dishes",
+                    "Make dinner"
+                ),
+                Map.of(
+                    "Stones", 4
+                )
             ));
     }
 
@@ -56,11 +64,19 @@ public class TestEntity implements Entity<TestEntity> {
         this.age = age;
     }
 
-    public Map<String, Integer> getAccounts() {
-        return this.accounts;
+    public List<String> getTodo() {
+        return this.todo;
     }
 
-    public void setAccounts(Map<String, Integer> accounts) {
-        this.accounts = accounts;
+    public void setTodo(List<String> todo) {
+        this.todo = todo;
+    }
+
+    public Map<String, Integer> getItems() {
+        return this.items;
+    }
+
+    public void setItems(Map<String, Integer> items) {
+        this.items = items;
     }
 }
