@@ -23,4 +23,13 @@ public class EntityTest {
             "Stones", 4
         ), entity.getItems());
     }
+
+    @Test
+    public void setTest() {
+        final TestEntity entity = Cherry.create(TestEntity.class);
+
+        entity.setAge(100);
+
+        Assertions.assertEquals(100, entity.getAge());
+    }
 }
